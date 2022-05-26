@@ -1,0 +1,21 @@
+{
+  "parser": "typescript",
+  "printWidth": 120,
+  "singleQuote": true,
+  "trailingComma": "all",
+
+  "overrides": [
+    {
+      "files": "*.scss",
+      "options": {
+        "parser": "scss"
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
+}
