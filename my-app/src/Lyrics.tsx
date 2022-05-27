@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useLyrics } from './hooks/useLyrics';
 
 type Props = {
   artist: string;
   songTitle: string;
-  searchCallback?: Dispatch<SetStateAction<boolean>>;
+  searchCallback?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Lyrics = ({ artist, songTitle, searchCallback }: Props) => {

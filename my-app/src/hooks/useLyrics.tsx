@@ -14,13 +14,13 @@ export const useLyrics = (artist: string, songTitle: string) => {
     } catch (e) {
       setLyrics('You probably spelled something wrong because ur bad');
       setLoading(false);
-      console.error(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
-    console.log('render');
     fetchLyrics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { loading, lyrics };

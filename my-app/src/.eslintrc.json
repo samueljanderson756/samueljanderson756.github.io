@@ -24,19 +24,7 @@
     "no-debugger": "error",
     "no-duplicate-imports": "error",
     "no-eval": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        "name": "@amzn/awsui-components-react",
-        "message": "Use @amzn/awsui-components-react/polaris instead. (Reason: Bundle size)"
-      },
-      {
-        "name": "date-fns",
-        "message": "Use date-fns/lib/some_function instead. (Reason: Bundle size)"
-      }
-    ],
-    "no-use-before-define": "error",
-    "simple-import-sort/sort": "error"
+    "no-use-before-define": "error"
   },
   "settings": {
     "react": { "version": "detect" }

@@ -24,11 +24,11 @@ export const App = () => {
     <div className="App">
       <div style={{ marginTop: '10%' }}>
         <Container>
-          <Grid container spacing={2} direction="column" justifyContent="center" alignItems="center">
-            <Grid item>
+          <Grid container={true} spacing={2} direction="column" justifyContent="center" alignItems="center">
+            <Grid item={true}>
               <TextField
                 disabled={search}
-                required
+                required={true}
                 id="outlined-required"
                 label="Artist name"
                 placeholder="Artist name"
@@ -36,10 +36,10 @@ export const App = () => {
                 onChange={(event) => setArtist(event.target.value)}
               />
             </Grid>
-            <Grid item>
+            <Grid item={true}>
               <TextField
                 disabled={search}
-                required
+                required={true}
                 id="outlined-required"
                 label="Song title"
                 placeholder="Song title"
@@ -47,7 +47,7 @@ export const App = () => {
                 onChange={(event) => setSongTitle(event.target.value)}
               />
             </Grid>
-            <Grid item>
+            <Grid item={true}>
               <Button onClick={() => handleSearch()} title={search ? 'Reset' : 'Search'}>
                 {search ? 'Reset' : 'Search'}
               </Button>
