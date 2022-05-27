@@ -1,3 +1,4 @@
+import CircularProgress from '@mui/material/CircularProgress';
 import React from 'react';
 import { useLyrics } from './hooks/useLyrics';
 
@@ -12,7 +13,7 @@ export const Lyrics = ({ artist, songTitle, searchCallback }: Props) => {
 
   return (
     <div style={{ marginTop: '10%', marginBottom: '10%' }}>
-      <div style={{ whiteSpace: 'pre-line' }}>{lyrics.loading ? 'Loading...' : lyrics.lyrics}</div>
+      <div style={{ whiteSpace: 'pre-line' }}>{lyrics.loading ? <CircularProgress /> : lyrics.lyrics}</div>
     </div>
   );
 };

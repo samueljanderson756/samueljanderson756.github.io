@@ -48,7 +48,12 @@ export const App = () => {
               />
             </Grid>
             <Grid item={true}>
-              <Button onClick={() => handleSearch()} title={search ? 'Reset' : 'Search'}>
+              <Button
+                variant="contained"
+                disabled={!songTitle || !artist}
+                onClick={() => handleSearch()}
+                title={search ? 'Reset' : 'Search'}
+              >
                 {search ? 'Reset' : 'Search'}
               </Button>
             </Grid>
