@@ -13,7 +13,7 @@ const Ticker = ({ title, value }: { title: string; value: string | undefined }) 
       <CardContent>
         <Grid container={true} spacing={2} direction="column" justifyContent="center" alignItems="center">
           <Grid item={true}>
-            <Typography color='#1976d2' variant="h3" component="div">
+            <Typography color="#1976d2" variant="h3" component="div">
               {title}
             </Typography>
           </Grid>
