@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 
 type Lyrics = { loading: boolean; lyrics: string | undefined };
+type APIParams = { artist: string; songTitle: string };
 
 const cleanLyrics = (dirtyLyrics: string) => {
   return dirtyLyrics.replace(/\n\n/g, '\n');
@@ -18,11 +19,11 @@ export const App = () => {
   const [artist, setArtist] = React.useState<string>('');
   const [lyrics, setLyrics] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+  const [previousInput, setPreviousInput] = React.useState<APIParams>();
 
   const fetchLyrics = React.useCallback(async () => {
     setLoading(true);
     try {
-      console.log(`https://api.lyrics.ovh/v1/${artist}/${songTitle}`);
       const data = await axios.get(`https://api.lyrics.ovh/v1/${artist}/${songTitle}`);
       setLyrics(cleanLyrics(data.data.lyrics));
       setLoading(false);
@@ -34,7 +35,10 @@ export const App = () => {
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    fetchLyrics();
+    if (!previousInput || previousInput.artist !== artist || previousInput.songTitle !== songTitle) {
+      fetchLyrics();
+      setPreviousInput({ artist, songTitle });
+    }
   };
 
   return (
