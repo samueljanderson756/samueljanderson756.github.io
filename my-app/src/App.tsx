@@ -5,7 +5,7 @@ import { CryptoWatch } from './components/CryptoWatch';
 import { LyricFinder } from './components/LyricFinder';
 import { a11yProps, TabPanel } from './components/TabPanel';
 
-function BasicTabs() {
+const AppTabs = () => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -20,8 +20,6 @@ function BasicTabs() {
           <Tab label="Crypto Watch" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      {/* <Box marginTop={'5vh'}/> */}
-      {/* <div style={{ marginTop: '10%'}}/> */}
       <TabPanel value={value} index={0}>
         <LyricFinder />
       </TabPanel>
@@ -30,12 +28,12 @@ function BasicTabs() {
       </TabPanel>
     </Box>
   );
-}
+};
 
 export const App = () => {
   return (
     <div className="App">
-      <BasicTabs />
+      <AppTabs />
     </div>
   );
 };
