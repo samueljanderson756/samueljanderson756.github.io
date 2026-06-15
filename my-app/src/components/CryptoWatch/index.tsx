@@ -1,56 +1,59 @@
-import Grid from '@mui/material/Grid';
 import React from 'react';
 import { Ticker } from './Ticker';
 
-type Transaction = {
-  base: string;
-  quote: string;
-  direction: string;
-  price: number;
-  volume: string;
-  priceUsd: number;
-};
+const assets = [
+  { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', accent: '#f59e0b' },
+  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', accent: '#8b5cf6' },
+  { id: 'monero', name: 'Monero', symbol: 'XMR', accent: '#f97316' },
+  { id: 'litecoin', name: 'Litecoin', symbol: 'LTC', accent: '#64748b' },
+];
+
+type Prices = Record<string, string | undefined>;
+
 export const CryptoWatch = () => {
-  const [bitcoin, setBitcoin] = React.useState();
-  const [ethereum, setEthereum] = React.useState();
-  const [monero, setMonero] = React.useState();
-  const [litecoin, setLitecoin] = React.useState();
+  const [prices, setPrices] = React.useState<Prices>({});
 
   React.useEffect(() => {
     const priceWs = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin,ethereum,monero,litecoin');
     priceWs.onmessage = (event) => {
-      const json = JSON.parse(event.data);
-
-      try {
-        if (json.ethereum) setEthereum(json.ethereum);
-        if (json.bitcoin) setBitcoin(json.bitcoin);
-        if (json.monero) setMonero(json.monero);
-        if (json.litecoin) setLitecoin(json.litecoin);
-        console.log('Success\n', json);
-      } catch (error) {
-        console.error(error);
-      }
+      const nextPrices = JSON.parse(event.data) as Prices;
+      setPrices((currentPrices) => ({ ...currentPrices, ...nextPrices }));
     };
 
     return () => priceWs.close();
   }, []);
 
   return (
-    <React.Fragment>
-      <Grid container={true} spacing={2} justifyContent="center" alignItems="center" columns={{ xs: 12, sm: 6, md: 1 }}>
-        <Grid item={true}>
-          <Ticker title={'Bitcoin'} value={bitcoin} />
-        </Grid>
-        <Grid item={true}>
-          <Ticker title={'Etherum'} value={ethereum} />
-        </Grid>
-        <Grid item={true}>
-          <Ticker title={'Monero'} value={monero} />
-        </Grid>
-        <Grid item={true}>
-          <Ticker title={'Litecoin'} value={litecoin} />
-        </Grid>
-      </Grid>
-    </React.Fragment>
+    <div className="crypto-page">
+      <header className="site-header crypto-header">
+        <a className="wordmark" href="#/" aria-label="Samuel John home">
+          SJ<span>.</span>
+        </a>
+        <a className="back-link" href="#/">
+          <span aria-hidden="true">←</span>
+          Back home
+        </a>
+      </header>
+
+      <main className="crypto-main">
+        <div className="crypto-heading">
+          <p className="section-heading__eyebrow">Live experiment</p>
+          <h1>Crypto Watch</h1>
+          <p>A quiet, real-time pulse on four cryptocurrencies. Prices stream live from CoinCap.</p>
+        </div>
+        <div className="crypto-grid" aria-label="Live cryptocurrency prices">
+          {assets.map((asset) => (
+            <Ticker
+              accent={asset.accent}
+              key={asset.id}
+              symbol={asset.symbol}
+              title={asset.name}
+              value={prices[asset.id]}
+            />
+          ))}
+        </div>
+        <p className="crypto-disclaimer">For observation only. This is not financial advice.</p>
+      </main>
+    </div>
   );
 };

@@ -1,22 +1,44 @@
-import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import React from 'react';
 
-export const Ticker = ({ title, value }: { title: string; value: string | undefined }) => {
-  return (
-    <Paper variant="outlined" sx={{ width: 125, height: 125, padding: 2 }}>
-      <Grid container={true} spacing={2} direction="column" justifyContent="center" alignItems="center">
-        <Grid item={true}>
-          <Typography color="#1976d2" variant="h5" component="div">
-            {title}
-          </Typography>
-        </Grid>
-        <Grid item={true}>
-          <div>{value ? <Typography variant="h6">{`$${value}`}</Typography> : <CircularProgress />}</div>
-        </Grid>
-      </Grid>
-    </Paper>
-  );
+const formatPrice = (value: string) => {
+  const price = Number(value);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: price < 1 ? 4 : 2,
+    maximumFractionDigits: price < 1 ? 4 : 2,
+  }).format(price);
 };
+
+export const Ticker = ({
+  accent,
+  symbol,
+  title,
+  value,
+}: {
+  accent: string;
+  symbol: string;
+  title: string;
+  value: string | undefined;
+}) => (
+  <article className="ticker" style={{ '--ticker-accent': accent } as React.CSSProperties}>
+    <div className="ticker__header">
+      <span className="ticker__dot" />
+      <span>{symbol}</span>
+    </div>
+    <h2>{title}</h2>
+    {value ? (
+      <p className="ticker__price">{formatPrice(value)}</p>
+    ) : (
+      <div className="ticker__loading" aria-label={`Loading ${title} price`}>
+        <span />
+        <span />
+        <span />
+      </div>
+    )}
+    <p className="ticker__status">
+      <span />
+      Live price
+    </p>
+  </article>
+);
