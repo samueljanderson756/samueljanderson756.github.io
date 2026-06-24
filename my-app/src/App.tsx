@@ -22,16 +22,20 @@ const projects: Project[] = [
     name: 'JohnsPocket',
     eyebrow: 'Personal finance',
     description: 'A thoughtful new way to understand and organize everyday finances.',
+    href: 'https://d27kbz92cmt76g.cloudfront.net/',
+    external: true,
   },
   {
     name: 'Stage Plot Alpha',
     eyebrow: 'Tools for musicians',
     description: 'A practical stage-plot builder designed to make show-day communication easier.',
+    href: 'https://centering-rex-464821-q4.web.app/',
+    external: true,
   },
   {
     name: 'Crypto Watch',
     eyebrow: 'Live experiment',
-    description: 'A real-time view of four cryptocurrency prices powered by CoinCap.',
+    description: 'A real-time view of crypto prices powered by public market data.',
     href: '#/crypto',
   },
 ];

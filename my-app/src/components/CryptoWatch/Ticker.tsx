@@ -12,11 +12,13 @@ const formatPrice = (value: string) => {
 
 export const Ticker = ({
   accent,
+  changePercent,
   symbol,
   title,
   value,
 }: {
   accent: string;
+  changePercent: string | undefined;
   symbol: string;
   title: string;
   value: string | undefined;
@@ -35,6 +37,12 @@ export const Ticker = ({
         <span />
         <span />
       </div>
+    )}
+    {changePercent && (
+      <p className={Number(changePercent) >= 0 ? 'ticker__change ticker__change--up' : 'ticker__change'}>
+        {Number(changePercent) >= 0 ? '+' : ''}
+        {Number(changePercent).toFixed(2)}% 24h
+      </p>
     )}
     <p className="ticker__status">
       <span />

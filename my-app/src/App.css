@@ -418,6 +418,33 @@ a.project-card:hover {
   max-width: 480px;
 }
 
+.crypto-heading .crypto-status {
+  align-items: center;
+  color: #aaa49a;
+  display: flex;
+  font-size: 10px;
+  font-weight: 800;
+  gap: 8px;
+  letter-spacing: 0.16em;
+  margin: 24px 0 0;
+  text-transform: uppercase;
+}
+
+.crypto-status span {
+  background: #fbbf24;
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
+
+.crypto-status--live span {
+  background: #5bca8a;
+}
+
+.crypto-status--error span {
+  background: #ef4444;
+}
+
 .crypto-grid {
   display: grid;
   gap: 16px;
@@ -473,6 +500,18 @@ a.project-card:hover {
   font-weight: 700;
   letter-spacing: -0.04em;
   margin: 0;
+}
+
+.ticker__change {
+  color: #ef7777;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin: 10px 0 0;
+}
+
+.ticker__change--up {
+  color: #5bca8a;
 }
 
 .ticker__status {
