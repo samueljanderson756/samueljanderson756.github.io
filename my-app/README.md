@@ -28,7 +28,8 @@ pnpm lint
 ## Deploy
 
 ```sh
-pnpm deploy
+pnpm run deploy:pages
 ```
 
 The deploy command builds the Vite app and publishes `dist/` to the repository's `gh-pages` branch.
+Use `pnpm run ...` for deploy scripts because `pnpm deploy` is a pnpm workspace command, not this app's GitHub Pages script.
