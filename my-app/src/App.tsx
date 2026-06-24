@@ -28,7 +28,7 @@ const projects: Project[] = [
   {
     name: 'Stage Plot Alpha',
     eyebrow: 'Tools for musicians',
-    description: 'A practical stage-plot builder designed to make show-day communication easier.',
+    description: 'A practical and free stage-plot builder designed to make show-day communication easier.',
     href: 'https://centering-rex-464821-q4.web.app/',
     external: true,
   },
@@ -111,8 +111,7 @@ const HomePage = () => (
           <p className="hero__eyebrow">Musician · Software Engineer</p>
           <h1 id="hero-heading">Samuel John</h1>
           <p className="hero__bio">
-            I’m a musician and software engineer creating thoughtful experiences for the stage, the web, and everyday
-            life.
+            I’m a musician and software engineer creating applications for the stage and for the web.
           </p>
           <a className="button button--primary" href="#projects">
             Explore my work
@@ -135,7 +134,7 @@ const HomePage = () => (
             <p className="section-heading__eyebrow">Selected work</p>
             <h2 id="projects-heading">Things I’m building</h2>
           </div>
-          <p>Music, useful tools, and experiments made with care.</p>
+          <p>Music, useful tools, and experiments..</p>
         </div>
         <div className="projects-grid">
           {projects.map((project, index) => (
@@ -148,7 +147,7 @@ const HomePage = () => (
     <footer className="site-footer">
       <div>
         <span className="footer-mark">SJ.</span>
-        <p>Making good things, one idea at a time.</p>
+        <p>Making okayish things, one idea at a time.</p>
       </div>
       <a className="github-link" href="https://github.com/samueljanderson756" target="_blank" rel="noreferrer">
         <GitHubIcon />
