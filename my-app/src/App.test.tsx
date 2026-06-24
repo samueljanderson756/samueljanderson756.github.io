@@ -44,7 +44,7 @@ test('renders Crypto Watch from its hash route and returns home', async () => {
   expect(screen.getByRole('heading', { name: 'Solana' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'XRP' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Litecoin' })).toBeInTheDocument();
-  expect(screen.getByText(/no API key to expire/i)).toBeInTheDocument();
+  expect(screen.getByText(/Coinbase public market data/i)).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('link', { name: /Back home/i }));
   window.location.hash = '#/';
