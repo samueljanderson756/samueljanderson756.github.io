@@ -29,7 +29,8 @@ Do not replace these merged rules with a trip-only rule file; Firestore has one 
 project, so an incomplete deployment could disable Stage Plot's cloud saves.
 
 The first authenticated visitor enters the six traveler names. After that, each device remembers which traveler is
-using it. All members share write access, so the password should only be given to the group.
+using it. Expenses are entered in USD, and the final payment plan stays read-only until the group settles up at the end
+of the trip. All members share write access, so the password should only be given to the group.
 
 ## Local development
 

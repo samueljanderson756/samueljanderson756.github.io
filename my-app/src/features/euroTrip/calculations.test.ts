@@ -1,5 +1,12 @@
 import { describe, expect, test } from 'vitest';
-import { calculateBalances, includePayer, parseEuros, simplifyBalances, splitEvenly } from './calculations';
+import {
+  calculateBalances,
+  formatCurrency,
+  includePayer,
+  parseAmount,
+  simplifyBalances,
+  splitEvenly,
+} from './calculations';
 import type { LedgerEntry, Member } from './types';
 
 const members: Member[] = [
@@ -9,11 +16,12 @@ const members: Member[] = [
 ];
 
 describe('money helpers', () => {
-  test('parses euro input without floating-point math', () => {
-    expect(parseEuros('12.34')).toBe(1234);
-    expect(parseEuros('8,5')).toBe(850);
-    expect(parseEuros('0')).toBeNull();
-    expect(parseEuros('4.999')).toBeNull();
+  test('parses dollar input without floating-point math', () => {
+    expect(parseAmount('12.34')).toBe(1234);
+    expect(parseAmount('8,5')).toBe(850);
+    expect(parseAmount('0')).toBeNull();
+    expect(parseAmount('4.999')).toBeNull();
+    expect(formatCurrency(1234)).toBe('$12.34');
   });
 
   test('distributes remainder cents deterministically', () => {
@@ -50,38 +58,6 @@ describe('balances', () => {
       ['sam', 4000],
       ['alex', -2000],
       ['jo', -2000],
-    ]);
-  });
-
-  test('records a settlement against both balances', () => {
-    const entries: LedgerEntry[] = [
-      {
-        amountCents: 3000,
-        createdAtMs: 1,
-        createdBy: 'sam',
-        description: 'Train',
-        id: 'train',
-        kind: 'expense',
-        occurredOn: '2026-09-23',
-        paidBy: 'sam',
-        participantIds: ['sam', 'alex', 'jo'],
-      },
-      {
-        amountCents: 1000,
-        createdAtMs: 2,
-        createdBy: 'alex',
-        fromMemberId: 'alex',
-        id: 'payment',
-        kind: 'settlement',
-        occurredOn: '2026-09-24',
-        toMemberId: 'sam',
-      },
-    ];
-
-    expect([...calculateBalances(members, entries)]).toEqual([
-      ['sam', 1000],
-      ['alex', 0],
-      ['jo', -1000],
     ]);
   });
 });

@@ -818,24 +818,6 @@
   font-weight: 400;
 }
 
-.euro-transfer > button {
-  background: transparent;
-  border: 1px solid var(--euro-line);
-  border-radius: 8px;
-  color: var(--euro-blue);
-  font-size: 10px;
-  font-weight: 850;
-  justify-self: start;
-  letter-spacing: 0.07em;
-  min-height: 38px;
-  padding: 0 13px;
-  text-transform: uppercase;
-}
-
-.euro-transfer > button:hover {
-  border-color: var(--euro-blue);
-}
-
 .euro-mobile-add {
   display: none;
 }
@@ -866,10 +848,6 @@
   padding: 30px;
   position: relative;
   width: 100%;
-}
-
-.euro-sheet--small {
-  max-width: 600px;
 }
 
 .euro-sheet__header {
@@ -1195,6 +1173,238 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* Keep the ledger in one predictable phone-sized layout on every device. */
+.euro-app,
+.euro-gate {
+  box-shadow: 0 0 0 1px rgba(24, 32, 57, 0.08);
+  box-sizing: border-box;
+  margin-inline: auto;
+  max-width: 480px;
+  min-height: 100svh;
+  overflow-x: clip;
+  overscroll-behavior-y: contain;
+  position: relative;
+  width: 100%;
+}
+
+.euro-app *,
+.euro-app *::before,
+.euro-app *::after,
+.euro-gate *,
+.euro-gate *::before,
+.euro-gate *::after {
+  box-sizing: border-box;
+}
+
+.euro-app button,
+.euro-app input,
+.euro-app select,
+.euro-gate button,
+.euro-gate input {
+  touch-action: manipulation;
+}
+
+.euro-gate {
+  padding: 72px 14px 24px;
+}
+
+.euro-gate__topbar {
+  left: 18px;
+  top: 20px;
+}
+
+.euro-gate__card {
+  border-radius: 18px;
+  max-width: none;
+  padding: 28px 20px;
+  width: 100%;
+}
+
+.euro-gate__card h1 {
+  font-size: clamp(42px, 13vw, 56px);
+}
+
+.euro-gate__card input,
+.euro-editor-form input,
+.euro-editor-form select {
+  font-size: 16px;
+}
+
+.euro-name-grid,
+.euro-form-row,
+.euro-balance-list,
+.euro-transfer-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.euro-app-header {
+  background: rgba(246, 243, 236, 0.96);
+  min-height: 64px;
+  padding: 0 14px;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.euro-profile-button > span:nth-child(2) {
+  display: none;
+}
+
+.euro-signout-button {
+  display: block;
+  padding-inline: 4px;
+}
+
+.euro-main {
+  max-width: none;
+  padding: 26px 14px 104px;
+  width: 100%;
+}
+
+.euro-overview {
+  align-items: stretch;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 26px;
+}
+
+.euro-overview h1 {
+  font-size: clamp(42px, 13vw, 58px);
+}
+
+.euro-overview > div:first-child > p:last-child {
+  margin-top: 12px;
+}
+
+.euro-total-card {
+  min-width: 0;
+  padding: 20px;
+}
+
+.euro-total-card strong {
+  font-size: 32px;
+}
+
+.euro-tabs {
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 20px;
+  margin-inline: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.euro-tabs button {
+  font-size: 9px;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.euro-panel {
+  border-radius: 14px;
+}
+
+.euro-panel__heading {
+  align-items: flex-start;
+  min-height: 92px;
+  padding: 18px;
+}
+
+.euro-panel__heading .euro-add-button,
+.euro-panel__note {
+  display: none;
+}
+
+.euro-entry {
+  gap: 12px;
+  padding: 18px;
+}
+
+.euro-entry__title-row {
+  gap: 8px;
+}
+
+.euro-entry__title-row h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.euro-balance,
+.euro-transfer {
+  border-right: 0 !important;
+  padding: 20px 18px;
+}
+
+.euro-balance + .euro-balance,
+.euro-transfer + .euro-transfer {
+  border-top: 1px solid var(--euro-line);
+}
+
+.euro-mobile-add {
+  align-items: center;
+  background: var(--euro-blue);
+  border: 0;
+  border-radius: 100px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  box-shadow: 0 12px 30px rgba(23, 61, 158, 0.32);
+  color: white;
+  display: flex;
+  font-size: 11px;
+  font-weight: 850;
+  gap: 8px;
+  left: 50%;
+  letter-spacing: 0.07em;
+  min-height: 52px;
+  padding: 0 22px;
+  position: fixed;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 8;
+}
+
+.euro-mobile-add span:first-child {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.euro-modal {
+  align-items: flex-end;
+  bottom: 0;
+  left: 50%;
+  max-width: 480px;
+  padding: 0;
+  right: auto;
+  top: 0;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.euro-modal__scrim {
+  touch-action: none;
+}
+
+.euro-sheet {
+  border-radius: 20px 20px 0 0;
+  max-height: calc(100svh - 12px);
+  max-width: none;
+  overscroll-behavior: contain;
+  padding: 24px 18px max(24px, env(safe-area-inset-bottom));
+}
+
+.euro-participant-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.euro-sheet__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 @media (prefers-reduced-motion: reduce) {

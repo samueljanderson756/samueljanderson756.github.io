@@ -1,18 +1,18 @@
 import type { LedgerEntry, Member, Transfer } from './types';
 
-const euroFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'EUR',
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  currency: 'USD',
   style: 'currency',
 });
 
-export const formatEuros = (amountCents: number) => euroFormatter.format(amountCents / 100);
+export const formatCurrency = (amountCents: number) => currencyFormatter.format(amountCents / 100);
 
-export const parseEuros = (value: string) => {
+export const parseAmount = (value: string) => {
   const normalized = value.trim().replace(',', '.');
   if (!/^\d+(?:\.\d{0,2})?$/.test(normalized)) return null;
 
-  const [euros, cents = ''] = normalized.split('.');
-  const amountCents = Number(euros) * 100 + Number(cents.padEnd(2, '0'));
+  const [dollars, cents = ''] = normalized.split('.');
+  const amountCents = Number(dollars) * 100 + Number(cents.padEnd(2, '0'));
   return Number.isSafeInteger(amountCents) && amountCents > 0 ? amountCents : null;
 };
 
@@ -43,19 +43,13 @@ export const calculateBalances = (members: Member[], entries: LedgerEntry[]) => 
   const balances = new Map(members.map((member) => [member.id, 0]));
 
   for (const entry of entries) {
-    if (entry.kind === 'expense') {
-      if (!balances.has(entry.paidBy) || !entry.participantIds.includes(entry.paidBy)) continue;
+    if (!balances.has(entry.paidBy) || !entry.participantIds.includes(entry.paidBy)) continue;
 
-      const shares = splitEvenly(entry.amountCents, entry.participantIds);
-      balances.set(entry.paidBy, (balances.get(entry.paidBy) ?? 0) + entry.amountCents);
-      for (const [memberId, share] of shares) {
-        if (!balances.has(memberId)) continue;
-        balances.set(memberId, (balances.get(memberId) ?? 0) - share);
-      }
-    } else {
-      if (!balances.has(entry.fromMemberId) || !balances.has(entry.toMemberId)) continue;
-      balances.set(entry.fromMemberId, (balances.get(entry.fromMemberId) ?? 0) + entry.amountCents);
-      balances.set(entry.toMemberId, (balances.get(entry.toMemberId) ?? 0) - entry.amountCents);
+    const shares = splitEvenly(entry.amountCents, entry.participantIds);
+    balances.set(entry.paidBy, (balances.get(entry.paidBy) ?? 0) + entry.amountCents);
+    for (const [memberId, share] of shares) {
+      if (!balances.has(memberId)) continue;
+      balances.set(memberId, (balances.get(memberId) ?? 0) - share);
     }
   }
 
@@ -143,5 +137,4 @@ export const simplifyBalances = (balances: Map<string, number>): Transfer[] => {
   return best ?? [];
 };
 
-export const totalSpent = (entries: LedgerEntry[]) =>
-  entries.reduce((sum, entry) => sum + (entry.kind === 'expense' ? entry.amountCents : 0), 0);
+export const totalSpent = (entries: LedgerEntry[]) => entries.reduce((sum, entry) => sum + entry.amountCents, 0);

@@ -20,7 +20,7 @@ import {
   type DocumentData,
   type Unsubscribe,
 } from 'firebase/firestore';
-import type { LedgerEntry, NewExpense, NewSettlement, Trip } from './types';
+import type { LedgerEntry, NewExpense, Trip } from './types';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -70,9 +70,21 @@ export const logOutOfTrip = async () => {
 
 export const subscribeToTrip = (onTrip: (trip: Trip | null) => void, onError: (error: Error) => void) => {
   const clients = requireFirebase();
+  const tripDocument = doc(clients.db, 'trips', tripId);
   return onSnapshot(
-    doc(clients.db, 'trips', tripId),
-    (snapshot) => onTrip(snapshot.exists() ? (snapshot.data() as Trip) : null),
+    tripDocument,
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        onTrip(null);
+        return;
+      }
+
+      const trip = snapshot.data() as Omit<Trip, 'currency'> & { currency?: string };
+      if (trip.currency !== 'USD') {
+        void setDoc(tripDocument, { currency: 'USD' }, { merge: true }).catch(onError);
+      }
+      onTrip({ ...trip, currency: 'USD' });
+    },
     onError,
   );
 };
@@ -81,8 +93,12 @@ const isLedgerEntry = (id: string, data: DocumentData): data is Omit<LedgerEntry
   typeof data.amountCents === 'number' &&
   typeof data.createdAtMs === 'number' &&
   typeof data.createdBy === 'string' &&
+  typeof data.description === 'string' &&
   typeof data.occurredOn === 'string' &&
-  (data.kind === 'expense' || data.kind === 'settlement') &&
+  typeof data.paidBy === 'string' &&
+  Array.isArray(data.participantIds) &&
+  data.participantIds.every((memberId: unknown) => typeof memberId === 'string') &&
+  data.kind === 'expense' &&
   Boolean(id);
 
 export const subscribeToEntries = (onEntries: (entries: LedgerEntry[]) => void, onError: (error: Error) => void) => {
@@ -107,7 +123,7 @@ export const createTrip = async (trip: Trip) => {
   await setDoc(doc(clients.db, 'trips', tripId), trip);
 };
 
-export const addEntry = async (entry: NewExpense | NewSettlement) => {
+export const addEntry = async (entry: NewExpense) => {
   const clients = requireFirebase();
   await addDoc(collection(clients.db, 'trips', tripId, 'entries'), {
     ...entry,

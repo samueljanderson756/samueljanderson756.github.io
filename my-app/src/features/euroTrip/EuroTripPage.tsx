@@ -1,5 +1,12 @@
 import React from 'react';
-import { calculateBalances, formatEuros, includePayer, parseEuros, simplifyBalances, totalSpent } from './calculations';
+import {
+  calculateBalances,
+  formatCurrency,
+  includePayer,
+  parseAmount,
+  simplifyBalances,
+  totalSpent,
+} from './calculations';
 import {
   addEntry,
   createTrip,
@@ -145,7 +152,7 @@ const TripSetup = ({ onCreated }: { onCreated: (trip: Trip) => Promise<void> }) 
     setSubmitting(true);
     setError('');
     try {
-      await onCreated({ currency: 'EUR', members, name: tripName.trim() });
+      await onCreated({ currency: 'USD', members, name: tripName.trim() });
     } catch (setupError) {
       setError(getErrorMessage(setupError, 'Could not create the trip. Please try again.'));
     } finally {
@@ -232,6 +239,14 @@ type ExpenseEditorProps = {
 };
 
 const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: ExpenseEditorProps) => {
+  React.useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   const [description, setDescription] = React.useState(expense?.description ?? '');
   const [amount, setAmount] = React.useState(expense ? (expense.amountCents / 100).toFixed(2) : '');
   const [paidBy, setPaidBy] = React.useState(expense?.paidBy ?? currentMember.id);
@@ -260,7 +275,7 @@ const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: Ex
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const amountCents = parseEuros(amount);
+    const amountCents = parseAmount(amount);
     if (!description.trim() || !amountCents) {
       setError('Add a description, valid amount, payer, and at least one person.');
       return;
@@ -321,7 +336,7 @@ const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: Ex
             <label>
               <span>Amount</span>
               <div className="euro-money-input">
-                <span>€</span>
+                <span>$</span>
                 <input
                   inputMode="decimal"
                   onChange={(event) => setAmount(event.target.value)}
@@ -401,136 +416,9 @@ const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: Ex
   );
 };
 
-const SettlementEditor = ({
-  currentMember,
-  initialTransfer,
-  members,
-  onClose,
-  onSaved,
-}: {
-  currentMember: Member;
-  initialTransfer?: Transfer;
-  members: Member[];
-  onClose: () => void;
-  onSaved: () => void;
-}) => {
-  const [fromMemberId, setFromMemberId] = React.useState(initialTransfer?.fromMemberId ?? currentMember.id);
-  const [toMemberId, setToMemberId] = React.useState(
-    initialTransfer?.toMemberId ?? members.find((member) => member.id !== currentMember.id)?.id ?? '',
-  );
-  const [amount, setAmount] = React.useState(initialTransfer ? (initialTransfer.amountCents / 100).toFixed(2) : '');
-  const [occurredOn, setOccurredOn] = React.useState(today());
-  const [error, setError] = React.useState('');
-  const [submitting, setSubmitting] = React.useState(false);
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const amountCents = parseEuros(amount);
-    if (!amountCents || fromMemberId === toMemberId) {
-      setError('Choose two different people and enter a valid amount.');
-      return;
-    }
-
-    setSubmitting(true);
-    setError('');
-    try {
-      await addEntry({
-        amountCents,
-        createdBy: currentMember.id,
-        fromMemberId,
-        kind: 'settlement',
-        occurredOn,
-        toMemberId,
-      });
-      onSaved();
-    } catch (saveError) {
-      setError(getErrorMessage(saveError, 'Could not record the payment. Please try again.'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="euro-modal" role="presentation">
-      <div className="euro-modal__scrim" onClick={onClose} />
-      <section
-        aria-labelledby="settlement-editor-title"
-        aria-modal="true"
-        className="euro-sheet euro-sheet--small"
-        role="dialog"
-      >
-        <header className="euro-sheet__header">
-          <div>
-            <p className="euro-kicker">Settle up</p>
-            <h2 id="settlement-editor-title">Record a payment</h2>
-          </div>
-          <button aria-label="Close payment form" className="euro-close-button" onClick={onClose} type="button">
-            ×
-          </button>
-        </header>
-        <form className="euro-editor-form" onSubmit={handleSubmit}>
-          <div className="euro-form-row">
-            <label>
-              <span>From</span>
-              <select onChange={(event) => setFromMemberId(event.target.value)} value={fromMemberId}>
-                {members.map((member) => (
-                  <option key={member.id} value={member.id}>
-                    {member.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>To</span>
-              <select onChange={(event) => setToMemberId(event.target.value)} value={toMemberId}>
-                {members.map((member) => (
-                  <option key={member.id} value={member.id}>
-                    {member.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div className="euro-form-row">
-            <label>
-              <span>Amount</span>
-              <div className="euro-money-input">
-                <span>€</span>
-                <input inputMode="decimal" onChange={(event) => setAmount(event.target.value)} value={amount} />
-              </div>
-            </label>
-            <label>
-              <span>Date</span>
-              <input
-                max={today()}
-                onChange={(event) => setOccurredOn(event.target.value)}
-                type="date"
-                value={occurredOn}
-              />
-            </label>
-          </div>
-          {error && (
-            <p className="euro-form-error" role="alert">
-              {error}
-            </p>
-          )}
-          <div className="euro-sheet__actions">
-            <button className="euro-secondary-button" onClick={onClose} type="button">
-              Cancel
-            </button>
-            <button className="euro-primary-button" disabled={submitting} type="submit">
-              {submitting ? 'Recording…' : 'Record payment'}
-            </button>
-          </div>
-        </form>
-      </section>
-    </div>
-  );
-};
-
 const EmptyState = ({ children, title }: { children: React.ReactNode; title: string }) => (
   <div className="euro-empty-state">
-    <span aria-hidden="true">€</span>
+    <span aria-hidden="true">$</span>
     <h3>{title}</h3>
     <p>{children}</p>
   </div>
@@ -564,8 +452,7 @@ const ExpenseList = ({
     ) : (
       <div className="euro-entry-list">
         {entries.map((entry) => {
-          const actor = memberById(members, entry.kind === 'expense' ? entry.paidBy : entry.fromMemberId);
-          const target = entry.kind === 'settlement' ? memberById(members, entry.toMemberId) : null;
+          const actor = memberById(members, entry.paidBy);
           const actorIndex = Math.max(
             0,
             members.findIndex((member) => member.id === actor?.id),
@@ -575,21 +462,17 @@ const ExpenseList = ({
               <span className={`euro-avatar euro-avatar--${(actorIndex % 6) + 1}`}>{initials(actor?.name ?? '?')}</span>
               <div className="euro-entry__body">
                 <div className="euro-entry__title-row">
-                  <h3>{entry.kind === 'expense' ? entry.description : 'Payment recorded'}</h3>
-                  <strong>{formatEuros(entry.amountCents)}</strong>
+                  <h3>{entry.description}</h3>
+                  <strong>{formatCurrency(entry.amountCents)}</strong>
                 </div>
                 <p>
-                  {entry.kind === 'expense'
-                    ? `${actor?.name ?? 'Unknown'} paid · split ${entry.participantIds.length} ${entry.participantIds.length === 1 ? 'way' : 'ways'}`
-                    : `${actor?.name ?? 'Unknown'} paid ${target?.name ?? 'Unknown'}`}
+                  {`${actor?.name ?? 'Unknown'} paid · split ${entry.participantIds.length} ${entry.participantIds.length === 1 ? 'way' : 'ways'}`}
                   <span> · {formatDate(entry.occurredOn)}</span>
                 </p>
                 <div className="euro-entry__actions">
-                  {entry.kind === 'expense' && (
-                    <button onClick={() => onEdit(entry)} type="button">
-                      Edit
-                    </button>
-                  )}
+                  <button onClick={() => onEdit(entry)} type="button">
+                    Edit
+                  </button>
                   <button onClick={() => onDelete(entry)} type="button">
                     Delete
                   </button>
@@ -629,7 +512,7 @@ const BalanceList = ({ balances, members }: { balances: Map<string, number>; mem
                 </div>
                 <strong className={balance > 0 ? 'is-positive' : balance < 0 ? 'is-negative' : ''}>
                   {balance > 0 ? '+' : ''}
-                  {formatEuros(balance)}
+                  {formatCurrency(balance)}
                 </strong>
                 <div className="euro-balance__track" aria-hidden="true">
                   <span style={{ width: `${Math.max(2, (Math.abs(balance) / maxBalance) * 100)}%` }} />
@@ -647,22 +530,17 @@ const SettlementPlan = ({
   entries,
   members,
   transfers,
-  onRecord,
 }: {
   entries: LedgerEntry[];
   members: Member[];
   transfers: Transfer[];
-  onRecord: (transfer?: Transfer) => void;
 }) => (
   <section aria-labelledby="settle-title" className="euro-panel">
     <div className="euro-panel__heading">
       <div>
-        <p className="euro-kicker">Fewest payments</p>
-        <h2 id="settle-title">Settle up</h2>
+        <p className="euro-kicker">End-of-trip plan</p>
+        <h2 id="settle-title">Who pays whom</h2>
       </div>
-      <button className="euro-secondary-button" onClick={() => onRecord()} type="button">
-        Record another payment
-      </button>
     </div>
     {transfers.length === 0 ? (
       <EmptyState title={entries.length === 0 ? 'No balances yet' : 'Everyone is settled'}>
@@ -674,7 +552,7 @@ const SettlementPlan = ({
       <>
         <div className="euro-settle-summary">
           <strong>{transfers.length}</strong>
-          <span>{transfers.length === 1 ? 'payment settles' : 'payments settle'} the whole group</span>
+          <span>{transfers.length === 1 ? 'payment settles' : 'payments settle'} everything at the end</span>
         </div>
         <div className="euro-transfer-list">
           {transfers.map((transfer, index) => {
@@ -687,10 +565,7 @@ const SettlementPlan = ({
                   <span aria-hidden="true">→</span>
                   <span>{to?.name}</span>
                 </div>
-                <strong>{formatEuros(transfer.amountCents)}</strong>
-                <button onClick={() => onRecord(transfer)} type="button">
-                  Record as paid
-                </button>
+                <strong>{formatCurrency(transfer.amountCents)}</strong>
               </article>
             );
           })}
@@ -718,17 +593,13 @@ const EuroTripApp = ({
   const [tab, setTab] = React.useState<Tab>('expenses');
   const [editingExpense, setEditingExpense] = React.useState<Expense | null>(null);
   const [addingExpense, setAddingExpense] = React.useState(false);
-  const [settlementTransfer, setSettlementTransfer] = React.useState<Transfer | null | undefined>(undefined);
   const balances = React.useMemo(() => calculateBalances(trip.members, entries), [entries, trip.members]);
   const transfers = React.useMemo(() => simplifyBalances(balances), [balances]);
 
   const handleDelete = async (entry: LedgerEntry) => {
-    const label = entry.kind === 'expense' ? entry.description : 'this payment';
-    if (!window.confirm(`Delete ${label}? This changes everyone's balances.`)) return;
+    if (!window.confirm(`Delete ${entry.description}? This changes everyone's balances.`)) return;
     await removeEntry(entry.id);
   };
-
-  const recordTransfer = (transfer?: Transfer) => setSettlementTransfer(transfer ?? null);
 
   return (
     <div className="euro-app">
@@ -754,7 +625,7 @@ const EuroTripApp = ({
           </div>
           <div className="euro-total-card">
             <span>Total group spend</span>
-            <strong>{formatEuros(totalSpent(entries))}</strong>
+            <strong>{formatCurrency(totalSpent(entries))}</strong>
             <small>
               <span aria-hidden="true" /> Synced for all six travelers
             </small>
@@ -776,8 +647,8 @@ const EuroTripApp = ({
               onClick={() => setTab(item)}
               type="button"
             >
-              {item === 'settle' ? 'Settle up' : item[0].toUpperCase() + item.slice(1)}
-              {item === 'expenses' && <span>{entries.filter((entry) => entry.kind === 'expense').length}</span>}
+              {item === 'settle' ? 'Final plan' : item[0].toUpperCase() + item.slice(1)}
+              {item === 'expenses' && <span>{entries.length}</span>}
               {item === 'settle' && transfers.length > 0 && <span>{transfers.length}</span>}
             </button>
           ))}
@@ -793,9 +664,7 @@ const EuroTripApp = ({
           />
         )}
         {tab === 'balances' && <BalanceList balances={balances} members={trip.members} />}
-        {tab === 'settle' && (
-          <SettlementPlan entries={entries} members={trip.members} onRecord={recordTransfer} transfers={transfers} />
-        )}
+        {tab === 'settle' && <SettlementPlan entries={entries} members={trip.members} transfers={transfers} />}
       </main>
 
       <button className="euro-mobile-add" onClick={() => setAddingExpense(true)} type="button">
@@ -816,15 +685,6 @@ const EuroTripApp = ({
             setAddingExpense(false);
             setEditingExpense(null);
           }}
-        />
-      )}
-      {settlementTransfer !== undefined && (
-        <SettlementEditor
-          currentMember={currentMember}
-          initialTransfer={settlementTransfer ?? undefined}
-          members={trip.members}
-          onClose={() => setSettlementTransfer(undefined)}
-          onSaved={() => setSettlementTransfer(undefined)}
         />
       )}
     </div>

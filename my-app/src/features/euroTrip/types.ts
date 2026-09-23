@@ -4,7 +4,7 @@ export type Member = {
 };
 
 export type Trip = {
-  currency: 'EUR';
+  currency: 'USD';
   members: Member[];
   name: string;
 };
@@ -24,17 +24,9 @@ export type Expense = EntryBase & {
   participantIds: string[];
 };
 
-export type Settlement = EntryBase & {
-  amountCents: number;
-  fromMemberId: string;
-  kind: 'settlement';
-  toMemberId: string;
-};
-
-export type LedgerEntry = Expense | Settlement;
+export type LedgerEntry = Expense;
 
 export type NewExpense = Omit<Expense, 'createdAtMs' | 'id'>;
-export type NewSettlement = Omit<Settlement, 'createdAtMs' | 'id'>;
 
 export type Transfer = {
   amountCents: number;
