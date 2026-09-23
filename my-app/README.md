@@ -9,23 +9,24 @@ refreshes work on GitHub Pages without a server redirect.
 ## Euro Trip shared ledger
 
 The Euro Trip route uses Firebase Authentication and Cloud Firestore so six travelers can use one shared password and
-see the same expenses in real time. The account email is supplied by the app; travelers only enter the password.
+see the same expenses in real time. It shares the `centering-rex-464821-q4` Firebase project with Stage Plot Alpha,
+while keeping its authentication identity and Firestore path separate. The Firebase Web configuration in
+`.env.production` is public client configuration; the shared password is never stored in the repository.
 
-1. Create a Firebase project and add a Web app in the Firebase console.
-2. Enable Email/Password under Authentication, then create one user for the trip. Use the same email in
-   `VITE_EURO_TRIP_ACCOUNT_EMAIL` and keep its password to share with the group. Add
-   `samueljanderson756.github.io` to Authentication's authorized domains.
-3. Create a Cloud Firestore database.
-4. Copy `.env.example` to `.env.local` and fill in the Web app configuration values. Firebase Web configuration is
-   public by design; do not put the trip password in this file.
-5. Copy the Authentication user's UID into `firestore.rules` in place of `REPLACE_WITH_TRIP_ACCOUNT_UID`. If changing
-   `VITE_EURO_TRIP_ID`, update the matching trip path in the rules too.
-6. From this directory, select the Firebase project and publish the rules:
+The Firebase project needs this one-time setup:
+
+1. Keep Google Authentication enabled for Stage Plot Alpha and also enable Email/Password Authentication.
+2. Create `euro-trip@samueljanderson756.github.io` as the shared trip user and give the password to the group.
+3. Add `samueljanderson756.github.io` to Authentication's authorized domains.
+4. Publish the merged rules from this directory. They preserve Stage Plot's `/users/{userId}` data and add the
+   isolated `/trips/euro-trip-2026` ledger:
 
 ```sh
-pnpm dlx firebase-tools use --add
 pnpm dlx firebase-tools deploy --only firestore:rules
 ```
+
+Do not replace these merged rules with a trip-only rule file; Firestore has one active ruleset for the whole Firebase
+project, so an incomplete deployment could disable Stage Plot's cloud saves.
 
 The first authenticated visitor enters the six traveler names. After that, each device remembers which traveler is
 using it. All members share write access, so the password should only be given to the group.

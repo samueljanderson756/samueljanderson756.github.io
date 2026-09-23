@@ -2,11 +2,29 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isTripAccount() {
-      return request.auth != null
-        && request.auth.uid == 'REPLACE_WITH_TRIP_ACCOUNT_UID';
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isTripAccount() {
+      return request.auth != null
+        && request.auth.uid == 'SyUjjnzZvNXS9HlNhL2Z2Nm3E7B3';
+    }
+
+    // Preserve Stage Plot Alpha's existing user-owned cloud saves.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /designs/{designId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+    }
+
+    // The shared Euro Trip account is the only identity allowed into the ledger.
     match /trips/euro-trip-2026 {
       allow read, write: if isTripAccount();
 
