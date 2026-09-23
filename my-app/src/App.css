@@ -31,6 +31,16 @@ a:focus-visible {
   outline-offset: 5px;
 }
 
+.route-loading {
+  align-items: center;
+  background: var(--paper);
+  color: var(--muted);
+  display: flex;
+  font-size: 13px;
+  justify-content: center;
+  min-height: 100vh;
+}
+
 .site-shell,
 .crypto-page {
   min-height: 100vh;
@@ -268,12 +278,22 @@ a.project-card:hover {
   border-radius: 0 18px 0 0;
 }
 
-.project-card:nth-child(3) {
+.project-card:nth-last-child(2):nth-child(odd) {
   border-radius: 0 0 0 18px;
 }
 
-.project-card:nth-child(4) {
+.project-card:last-child:nth-child(even) {
   border-radius: 0 0 18px;
+}
+
+.project-card:last-child:nth-child(odd) {
+  border-radius: 0 0 18px 18px;
+  grid-column: 1 / -1;
+  min-height: 280px;
+}
+
+.project-card:last-child:nth-child(odd) .project-card__body {
+  max-width: 640px;
 }
 
 .project-card--soon {
@@ -651,6 +671,7 @@ a.project-card:hover {
 
   .project-card:last-child {
     border-radius: 0 0 14px 14px !important;
+    grid-column: auto;
   }
 
   .site-footer {

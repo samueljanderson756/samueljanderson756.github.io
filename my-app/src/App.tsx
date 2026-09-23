@@ -2,6 +2,10 @@ import React from 'react';
 import './App.css';
 import { CryptoWatch } from './components/CryptoWatch';
 
+const EuroTripPage = React.lazy(() =>
+  import('./features/euroTrip/EuroTripPage').then((module) => ({ default: module.EuroTripPage })),
+);
+
 type Project = {
   description: string;
   eyebrow: string;
@@ -31,6 +35,12 @@ const projects: Project[] = [
     description: 'A practical and free stage-plot builder designed to make show-day communication easier.',
     href: 'https://centering-rex-464821-q4.web.app/',
     external: true,
+  },
+  {
+    name: 'Euro Trip Splitter',
+    eyebrow: 'Shared travel tool',
+    description: 'A simple shared ledger for splitting trip expenses and settling up with fewer payments.',
+    href: '#/euro-trip',
   },
   {
     name: 'Crypto Watch',
@@ -171,5 +181,13 @@ const useHashRoute = () => {
 
 export const App = () => {
   const route = useHashRoute();
-  return route === '#/crypto' ? <CryptoWatch /> : <HomePage />;
+  if (route === '#/crypto') return <CryptoWatch />;
+  if (route === '#/euro-trip') {
+    return (
+      <React.Suspense fallback={<div className="route-loading">Opening Euro Trip…</div>}>
+        <EuroTripPage />
+      </React.Suspense>
+    );
+  }
+  return <HomePage />;
 };

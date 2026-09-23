@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isTripAccount() {
+      return request.auth != null
+        && request.auth.uid == 'REPLACE_WITH_TRIP_ACCOUNT_UID';
+    }
+
+    match /trips/euro-trip-2026 {
+      allow read, write: if isTripAccount();
+
+      match /entries/{entryId} {
+        allow read, write: if isTripAccount();
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

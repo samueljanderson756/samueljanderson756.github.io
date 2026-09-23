@@ -30,8 +30,17 @@ test('renders the portfolio homepage and project links', () => {
     'href',
     'https://centering-rex-464821-q4.web.app/',
   );
+  expect(screen.getByRole('link', { name: /Euro Trip Splitter/i })).toHaveAttribute('href', '#/euro-trip');
   expect(screen.getByRole('link', { name: /Crypto Watch/i })).toHaveAttribute('href', '#/crypto');
   expect(screen.queryByText('Coming Soon')).not.toBeInTheDocument();
+});
+
+test('renders the Euro Trip route', async () => {
+  window.location.hash = '#/euro-trip';
+  render(<App />);
+
+  expect(await screen.findByRole('heading', { name: /Connect the shared ledger/i })).toBeInTheDocument();
+  expect(await screen.findByRole('link', { name: /Back home/i })).toHaveAttribute('href', '#/');
 });
 
 test('renders Crypto Watch from its hash route and returns home', async () => {
