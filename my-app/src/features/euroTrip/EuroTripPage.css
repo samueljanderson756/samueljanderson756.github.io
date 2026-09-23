@@ -631,6 +631,66 @@
   margin: 0;
 }
 
+.euro-entry__participants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 11px;
+}
+
+.euro-split-badge {
+  align-items: center;
+  background: #f0eee8;
+  border: 1px solid #e0ddd5;
+  border-radius: 100px;
+  color: #454b5c;
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 750;
+  gap: 5px;
+  line-height: 1;
+  padding: 4px 8px 4px 4px;
+}
+
+.euro-split-badge > span {
+  align-items: center;
+  background: #dce5ff;
+  border-radius: 50%;
+  color: #173d9e;
+  display: inline-flex;
+  font-size: 7px;
+  font-weight: 850;
+  height: 18px;
+  justify-content: center;
+  letter-spacing: 0;
+  width: 18px;
+}
+
+.euro-split-badge:nth-child(6n + 2) > span {
+  background: #ffe0d8;
+  color: #a33424;
+}
+
+.euro-split-badge:nth-child(6n + 3) > span {
+  background: #d6f1e7;
+  color: #11694e;
+}
+
+.euro-split-badge:nth-child(6n + 4) > span {
+  background: #f0e0ff;
+  color: #713ba3;
+}
+
+.euro-split-badge:nth-child(6n + 5) > span {
+  background: #fff0bf;
+  color: #7f5c00;
+}
+
+.euro-split-badge:nth-child(6n + 6) > span {
+  background: #dceff4;
+  color: #246075;
+}
+
 .euro-entry__actions {
   display: flex;
   gap: 12px;

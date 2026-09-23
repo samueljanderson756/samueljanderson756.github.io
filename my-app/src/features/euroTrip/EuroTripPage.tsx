@@ -456,6 +456,10 @@ const ExpenseList = ({
       <div className="euro-entry-list">
         {entries.map((entry) => {
           const actor = memberById(members, entry.paidBy);
+          const participants = entry.participantIds.flatMap((memberId) => {
+            const member = memberById(members, memberId);
+            return member ? [member] : [];
+          });
           const actorIndex = Math.max(
             0,
             members.findIndex((member) => member.id === actor?.id),
@@ -472,6 +476,17 @@ const ExpenseList = ({
                   {`${actor?.name ?? 'Unknown'} paid · split ${entry.participantIds.length} ${entry.participantIds.length === 1 ? 'way' : 'ways'}`}
                   <span> · {formatDate(entry.occurredOn)}</span>
                 </p>
+                <div
+                  aria-label={`Split between ${participants.map((member) => member.name).join(', ')}`}
+                  className="euro-entry__participants"
+                >
+                  {participants.map((member) => (
+                    <span className="euro-split-badge" key={member.id}>
+                      <span aria-hidden="true">{initials(member.name)}</span>
+                      {member.name}
+                    </span>
+                  ))}
+                </div>
                 <div className="euro-entry__actions">
                   <button onClick={() => onEdit(entry)} type="button">
                     Edit
