@@ -1375,8 +1375,9 @@
 }
 
 .euro-modal {
-  align-items: flex-end;
+  align-items: stretch;
   bottom: 0;
+  height: 100svh;
   left: 50%;
   max-width: 480px;
   padding: 0;
@@ -1391,11 +1392,52 @@
 }
 
 .euro-sheet {
-  border-radius: 20px 20px 0 0;
-  max-height: calc(100svh - 12px);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: none;
   max-width: none;
+  overflow: hidden;
+  padding: 0;
+}
+
+.euro-sheet__header {
+  background: var(--euro-surface);
+  border-bottom: 1px solid var(--euro-line);
+  flex: 0 0 auto;
+  padding: max(18px, env(safe-area-inset-top)) 18px 14px;
+  z-index: 2;
+}
+
+.euro-sheet__header .euro-kicker {
+  margin-bottom: 5px;
+}
+
+.euro-sheet__header h2 {
+  font-size: 28px;
+}
+
+.euro-editor-form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  min-height: 0;
+  overflow-anchor: none;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 24px 18px max(24px, env(safe-area-inset-bottom));
+  padding: 18px;
+  scroll-behavior: auto;
+  scroll-padding-block: 18px 96px;
+  scrollbar-gutter: stable;
+}
+
+.euro-editor-form input,
+.euro-editor-form select {
+  scroll-margin-block: 18px 96px;
 }
 
 .euro-participant-grid {
@@ -1403,8 +1445,15 @@
 }
 
 .euro-sheet__actions {
+  background: var(--euro-surface);
+  border-top: 1px solid var(--euro-line);
+  bottom: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin: 0 -18px -18px;
+  padding: 14px 18px max(14px, env(safe-area-inset-bottom));
+  position: sticky;
+  z-index: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {

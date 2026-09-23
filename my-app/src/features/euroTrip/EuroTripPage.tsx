@@ -239,11 +239,15 @@ type ExpenseEditorProps = {
 };
 
 const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: ExpenseEditorProps) => {
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
     };
   }, []);
 
@@ -326,7 +330,6 @@ const ExpenseEditor = ({ currentMember, expense, members, onClose, onSaved }: Ex
           <label>
             <span>What was it?</span>
             <input
-              autoFocus
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Dinner in Rome"
               value={description}
